@@ -9,5 +9,8 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= Seq(
   javaJdbc,
   cache,
-  javaWs
+  javaWs,
+  
+  
+  "com.mashape.unirest"    %  "unirest-java"        % "1.4.9"
 )
