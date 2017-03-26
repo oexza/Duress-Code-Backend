@@ -57,26 +57,26 @@ public class HomeController extends Controller {
 		// final Map<String, String[]> bodyParams = body.asFormUrlEncoded();
 
 		// final String accountNumber = bodyParams.get("accountNumber")[0];
-		getAccountDetailsFromAccessBankApi(accountNumber);
+		// getAccountDetailsFromAccessBankApi(accountNumber);
 
-		return getAccountDetailsFromAccessBankApi(accountNumber).thenApply(res -> ok(res));
-
-	}
-
-	public CompletionStage<Result> normal() {
-		final Request req = ctx().request();
-		final RequestBody body = req.body();
-
-		final Map<String, String[]> bodyParams = body.asFormUrlEncoded();
-
-		final String accountNumber = bodyParams.get("accountNumber")[0];
-		getAccountDetailsFromAccessBankApi(accountNumber);
-
-		return getAccountDetailsFromAccessBankApi(accountNumber).thenApply(res -> ok(res));
+		return getAccountDetailsFromAccessBankApi(accountNumber, true).thenApply(res -> ok(res));
 
 	}
 
-	public CompletionStage<JsonNode> getAccountDetailsFromAccessBankApi(final String accountNumber) {
+	public CompletionStage<Result> normal(final String accountNumber) {
+		//final Request req = ctx().request();
+		//final RequestBody body = req.body();
+
+		//final Map<String, String[]> bodyParams = body.asFormUrlEncoded();
+
+		//final String accountNumber = bodyParams.get("accountNumber")[0];
+
+		return getAccountDetailsFromAccessBankApi(accountNumber, false).thenApply(res -> ok(res));
+
+	}
+
+	public CompletionStage<JsonNode> getAccountDetailsFromAccessBankApi(final String accountNumber,
+			final boolean isDuress) {
 
 		// final ObjectNode body = Json.newObject();
 
@@ -93,12 +93,13 @@ public class HomeController extends Controller {
 		return accessTokenRequestPromise.thenApply(res -> res.asJson().get("access_token").asText())
 				.thenCompose(accessToken -> {
 
-					return getAccountEnqiry(accountNumber, accessToken);
+					return getAccountEnqiry(accountNumber, accessToken, isDuress);
 				});
 
 	}
 
-	public CompletionStage<JsonNode> getAccountEnqiry(final String accountNumber, final String accessToken) {
+	public CompletionStage<JsonNode> getAccountEnqiry(final String accountNumber, final String accessToken,
+			final boolean isDuress) {
 		Objects.requireNonNull(accessToken, "access token cannot be null");
 
 		final ObjectNode accountEnquiryBody = Json.newObject();
@@ -114,7 +115,11 @@ public class HomeController extends Controller {
 			final double accountBalance = response.asJson().get("data").get("availablebalance").asDouble();
 
 			final ObjectNode result = Json.newObject();
-			result.put("balance", accountBalance * 0.1);
+			if (isDuress)
+				result.put("balance", accountBalance * 0.1);
+			else if(!isDuress) {
+				result.put("balance", accountBalance);
+			}
 			return result;
 		});
 	}

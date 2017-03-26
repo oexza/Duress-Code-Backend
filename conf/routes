@@ -6,6 +6,8 @@
 GET    /               controllers.HomeController.index
 
 GET   /duress/:accountNumber    controllers.HomeController.duress(accountNumber)
+GET   /normal/:accountNumber    controllers.HomeController.normal(accountNumber)
+
 # An example controller showing how to use dependency injection
 GET    /count          controllers.CountController.count
 # An example controller showing how to write asynchronous code
