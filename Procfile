@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/duress-code -Dhttp.port=${PORT}
+web: target/universal/stage/bin/durress-code -Dhttp.port=${PORT}
