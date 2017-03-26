@@ -59,7 +59,7 @@ public class HomeController extends Controller {
 		// final String accountNumber = bodyParams.get("accountNumber")[0];
 		// getAccountDetailsFromAccessBankApi(accountNumber);
 
-		return getAccountDetailsFromAccessBankApi(accountNumber, true).thenApply(res -> ok(res));
+		return getAccountDetailsFromAccessBankApi(accountNumber, true).thenApply(res -> ok(res.get("balance").asText()));
 
 	}
 
